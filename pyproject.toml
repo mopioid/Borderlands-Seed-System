@@ -1,0 +1,15 @@
+[project]
+name = "seed_system"
+version = "1"
+authors = [{ name = "mopioid" }]
+description = """\
+A library for mod developers to implement a seed system in seeded randomizers.
+"""
+
+[project.urls]
+Changelog = "https://github.com/mopioid/Borderlands-Seed-System/releases"
+
+[tool.sdkmod]
+name = "Vendor Edit"
+license = {name = "MIT", url = "https://choosealicense.com/licenses/mit/" }
+download = "https://github.com/mopioid/Borderlands-Seed-System/releases"
