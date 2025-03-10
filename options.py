@@ -4,10 +4,7 @@ import math
 
 import mods_base
 
-from typing import Sequence, TypeVar
-
-
-Value = TypeVar("Value")
+from typing import Sequence
 
 
 class BaseSeedOption(mods_base.BaseOption):
@@ -24,15 +21,6 @@ class ValueSeedOption[J: mods_base.JSON](
     possible values.
     """
 
-    def __hash__(self) -> int:
-        return hash(self.identifier)
-
-    def __eq__(self, value: object) -> bool:
-        return (
-            isinstance(value, mods_base.ValueOption)
-            and value.identifier == self.identifier
-        )
-
     def value_to_bits(self, value: J) -> int:
         """
         Override to define how to convert values for the seed option into bits
@@ -48,6 +36,16 @@ class ValueSeedOption[J: mods_base.JSON](
         raise NotImplementedError
 
 
+    def __hash__(self) -> int:
+        return hash(self.identifier)
+
+    def __eq__(self, value: object) -> bool:
+        return (
+            isinstance(value, mods_base.ValueOption)
+            and value.identifier == self.identifier
+        )
+
+
 class BoolSeedOption(ValueSeedOption[bool], mods_base.BoolOption):
     width = 1
 
@@ -55,7 +53,7 @@ class BoolSeedOption(ValueSeedOption[bool], mods_base.BoolOption):
         return int(value)
 
     def bits_to_value(self, bits: int) -> bool:
-        return False if bits == 0 else True
+        return bits != 0
 
 
 class SliderSeedOption(ValueSeedOption[float], mods_base.SliderOption):

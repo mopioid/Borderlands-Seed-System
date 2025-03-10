@@ -56,22 +56,23 @@ class SeedFormat:
             should be inserted. Any non-alphanumeric character can be used for
             decoration. 
             
-            For example, the format string 'XXXXX-XXXX-XXXXX` will result in
+            For example, the format string 'XXXXX-XXXXX-XXXXX` will result in
             seeds with the appearance 'qadle-ta377-777ry'.
 
-            The number of 'X' characters in the format strong determines how
+            The number of 'X' characters in the format string determines how
             many bits of data it can represent. Available bits are consumed by
-            the 6 bit version number, followed by the seed format's options,
+            the 5 bit version number, followed by the seed format's options,
             and then any remaining are dedicated to randomness.
             
             Thus, when designing a format string, a sufficent quantity of X's
             are required to reach your desired level of randomess. To assist in
-            this while designing a format, you may check the `seed_format`'s
+            this while designing a format, you may check the SeedFormat's
             `variant_count`.
 
-            Finally, as per base32 specifications, 'X' quantities whose modulos
-            of 8 equal 1, 3, or 6 cannot be used. for these, SeedFormatError is
-            raised, containing a suggestion of an alternate quantity.
+            Finally, as per the base32 specification, 'X' quantities whose
+            modulos of 8 equal 1, 3, or 6 cannot be used. for these,
+            SeedFormatError is raised, containing a suggestion of an alternate
+            quantity.
 
         seed_options:
             The options that can be represented by the seed format.
@@ -80,13 +81,16 @@ class SeedFormat:
             the user in the seed generation menu. You may include any
             `BaseSeedOption` in this sequence, including `GroupedSeedOption`
             and `NestedSeedOption`, however these will only appear in the
-            seed generation menu, and only instances of `ValueSeedOption` will
-            be present in the final value of `seed_options`.
+            seed generation menu.
     """
     version: int
     format_string: str
     seed_options: Sequence[BaseSeedOption]
+
     value_seed_options: Sequence[ValueSeedOption[Any]]
+    """
+    The ValueSeedOption's that are encoded into seeds of this format.
+    """
 
     byte_count: int
     """

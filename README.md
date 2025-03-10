@@ -62,7 +62,7 @@ It is important to maintain references to individual seed options, as you will b
 
 ### Creating Seed Formats
 
-Seed Formats define how your seed looks, as well as what information it encodes, including options and randomness bits. It also allows you to differentiate how seeds of specific versions should behave.
+Seed Formats define how your seed looks, as well as what information it encodes, including options and randomness bits. They also allows you to differentiate how seeds of specific versions should behave.
 ```python
 version0 = SeedFormat(
     version=0,

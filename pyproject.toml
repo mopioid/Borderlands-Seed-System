@@ -10,6 +10,6 @@ A library for mod developers to implement a seed system in seeded randomizers.
 Changelog = "https://github.com/mopioid/Borderlands-Seed-System/releases"
 
 [tool.sdkmod]
-name = "Vendor Edit"
+name = "Seed System"
 license = {name = "MIT", url = "https://choosealicense.com/licenses/mit/" }
 download = "https://github.com/mopioid/Borderlands-Seed-System/releases"

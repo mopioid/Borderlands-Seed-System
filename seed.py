@@ -85,7 +85,7 @@ class Seed(metaclass=seed_type):
     want users to be able to continue using older seeds that they created in
     previous versions of your mod, even after they have updated.
 
-    To accomplish this, the contents of `versions` can be ammended with
+    To accomplish this, the contents of `seed_formats` can be ammended with
     additional SeedFormats at any time, while also leaving the previous ones in
     place unmodified. Users seeds will automatically be matched with the
     correct SeedFormat object when loaded, and thus behave as expected,
