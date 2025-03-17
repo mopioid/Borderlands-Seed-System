@@ -90,7 +90,7 @@ class LootSeed(Seed):
     seed_formats = version0, version1
     default_version = version1
 
-    def enabled(self) -> None:
+    def enable(self) -> None:
         randomization = random.Random(self.data)
 
         if self[include_missions]:
@@ -98,7 +98,7 @@ class LootSeed(Seed):
         if self.seed_format is version1 and self[duplicate_count] == 1:
             ...
 
-    def disabled(self) -> None:
+    def disable(self) -> None:
         ...
 ```
 Note how your `Seed` subclass instances provide access to its data (including randomness) for seeding random number generators, its format for providing different behavior based on version, as well as the options encoded into it as selected by the player.
@@ -119,5 +119,6 @@ mod = mods_base.build_mod(
     options=[new_seed_menu, edit_seeds_button, select_seed_menu],
     settings_file=mods_base.SETTINGS_DIR / "Loot Randomizer" / "settings.json",
     on_enable=LootSeed.enable_seed
+    on_disable=LootSeed.disable_seed
 )
 ```
