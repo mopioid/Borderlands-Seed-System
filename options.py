@@ -37,13 +37,10 @@ class ValueSeedOption[J: mods_base.JSON](
 
 
     def __hash__(self) -> int:
-        return hash(self.identifier)
+        return id(self)
 
     def __eq__(self, value: object) -> bool:
-        return (
-            isinstance(value, mods_base.ValueOption)
-            and value.identifier == self.identifier
-        )
+        return self is value
 
 
 class BoolSeedOption(ValueSeedOption[bool], mods_base.BoolOption):

@@ -5,9 +5,9 @@ from weakref import ReferenceType
 import mods_base
 
 try:
-    from console_mod_menu.screens import screen_stack
+    from console_mod_menu.screens import screen_stack as console_screens
 except ImportError:
-    screen_stack = ()
+    console_screens = ()
 
 from .formats import SeedFormat
 from .options import ValueSeedOption
@@ -25,7 +25,7 @@ type ApplySeedCallback = Callable[[str], None]
 
 
 def show_message(title: str, message: str) -> None:
-    if len(screen_stack) > 0:
+    if console_screens:
         print(f"\n[ {title} ]\n{message}\n")
 
     elif mods_base.Game.get_tree() == mods_base.Game.Willow2:
@@ -228,7 +228,7 @@ class SelectSeedNested(mods_base.NestedOption):
         else:
             self._seedsystem_dropdown.choices = [""] + seeds
 
-        self._seedsystem_apply_button.is_hidden = (len(screen_stack) > 0)
+        self._seedsystem_apply_button.is_hidden = bool(console_screens)
 
         return self._seedsystem_children
 
@@ -273,7 +273,7 @@ class SeedDropdown(mods_base.DropdownOption):
     def value(self, value: str) -> None:  # pyright: ignore[reportIncompatibleVariableOverride]
         self._seedsystem_staged = value
 
-        if (len(screen_stack) > 0):
+        if console_screens:
             try:
                 self._seedsystem_on_apply(value)
                 self._seedsystem_value = value

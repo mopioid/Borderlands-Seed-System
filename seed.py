@@ -261,11 +261,7 @@ class Seed(metaclass=seed_type):
         if (menu := cls._select_seed_menu()):
             menu._seedsystem_dropdown.seedsystem_commit_staged(seed.string)  # pyright: ignore[reportPrivateUsage]
 
-        if cls.enabled_seed:
-            cls.enabled_seed.disabled()
-        
-        cls.enabled_seed = seed
-        seed.enabled()
+        cls.enable_seed(seed)
 
         ui.show_message(
             "Seed Generated and Applied",
@@ -345,11 +341,7 @@ class Seed(metaclass=seed_type):
             )
             raise error
 
-        if cls.enabled_seed:
-            cls.enabled_seed.disabled()
-
-        cls.enabled_seed = seed
-        seed.enabled()
+        cls.enable_seed(seed)
 
         ui.show_message(
             "Seed Applied",
@@ -374,11 +366,26 @@ class Seed(metaclass=seed_type):
         return cls(string)
 
 
+    current_seed: ClassVar[Self | None] = None
+    """
+    The seed currently enabled via `enable_seed()`, if any.
+    """
+
+
     @classmethod
     def enable_seed(cls, seed: Self | None = None) -> None:
         """
         Enable the specified seed, or the last enabled seed as per the setting
         saved via `select_seed_menu()`.
+
+        `enable()` is invoked on the newly enabled seed, and the value of
+        `current_seed` is updated to reference it.
+
+        If any seed was already enabled as per `current_seed`, `disable()` is
+        first invoked on it.
+
+        If the specified seed equals the seed in `current_seed`, then this
+        method does nothing.
 
         Args:
             seed:
@@ -386,23 +393,9 @@ class Seed(metaclass=seed_type):
                 
                 Alternatively, invoking this method with no arguments can be
                 used to load the last enabled seed, as saved to your mod's
-                settings via `select_seed_menu()`. This method may be invoked
-                this way after your mod's settings have been loaded, e.g. via
-                the `on_enable` parameter of `mods_base.build_mod`.
+                settings via `select_seed_menu()`.
         """
-        if seed:
-           if cls.enabled_seed:
-               cls.enabled_seed.disabled()
-           cls.enabled_seed = seed
-
-        else:
-            if cls.enabled_seed:
-                raise RuntimeError(
-                    "Invoking enable_seed() with no arguments to enable the"
-                    " seed stored in settings can only be done before other"
-                    " seeds have been enabled"
-                )
-
+        if not seed:
             if not (menu := cls._select_seed_menu()):
                 raise RuntimeError(
                     "Invoking enable_seed() with no arguments to enable the"
@@ -410,21 +403,35 @@ class Seed(metaclass=seed_type):
                     " in the mod's options, and should be invoked once the"
                     " mod has been enabled."
                 )
+            seed_string = menu._seedsystem_dropdown.value  # pyright: ignore[reportPrivateUsage]
+            try:
+                seed = cls(seed_string)
+            except Exception as error:
+                print(
+                    f"Could not enable last used seed '{seed_string}':"
+                    f"\n{error}"
+                )
+                return
 
-            if (string := menu._seedsystem_dropdown.value):  # pyright: ignore[reportPrivateUsage]
-                try:
-                    cls.enabled_seed = cls(string)
-                except Exception as error:
-                    print(error)
+        if cls.current_seed:
+            if seed == cls.current_seed:
+                return
 
-        if cls.enabled_seed:
-            cls.enabled_seed.enabled()
+            cls.current_seed.disable()
+            cls.current_seed = None
+
+        seed.enable()
+        cls.current_seed = seed
 
 
-    enabled_seed: ClassVar[Self | None] = None
-    """
-    The currently enabled seed, if any.
-    """
+    @classmethod
+    def disable_seed(cls) -> None:
+        """
+        Disable the currently enabled seed in `current_seed`, if any.
+        """
+        if cls.current_seed:
+            cls.current_seed.disable()
+            cls.current_seed = None
 
 
     string: str
@@ -445,6 +452,19 @@ class Seed(metaclass=seed_type):
     """
     The option/value pairs for this seed.
     """
+
+    def enable(self) -> None:
+        """
+        Override to provide behavior when a seed instance is enabled.
+        """
+        pass
+
+    def disable(self) -> None:
+        """
+        Override to provide behavior when a seed instance is disabled.
+        """
+        pass
+
 
     @overload
     def __init__(self, string: str) -> None: ...
@@ -587,17 +607,11 @@ class Seed(metaclass=seed_type):
                 self.string += char
 
 
-    def enabled(self) -> None:
-        """
-        Override to provide behavior when a seed instance is enabled.
-        """
-        pass
+    def __hash__(self) -> int:
+        return hash(self.data)
 
-    def disabled(self) -> None:
-        """
-        Override to provide behavior when a seed instance is disabled.
-        """
-        pass
+    def __eq__(self, value: object) -> bool:
+        return type(value) == type(self) and self.data == value.data
 
 
     def __getitem__[T: mods_base.JSON](
@@ -629,7 +643,7 @@ class Seed(metaclass=seed_type):
         return self.options.get(option, default)
 
     def __repr__(self) -> str:
-        return f'{self.__class__.__name__}("{self.string}")'
+        return f'{type(self).__name__}("{self.string}")'
 
     def __str__(self) -> str:
         return self.string
