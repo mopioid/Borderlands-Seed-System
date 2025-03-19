@@ -72,7 +72,7 @@ class SliderSeedOption(ValueSeedOption[float], mods_base.SliderOption):
             int(self.step)
         )
 
-        self.width = math.ceil(math.log2(len(self._range)))
+        self.width = int(math.ceil(math.log2(len(self._range))))
 
         super().__post_init__()
 
@@ -85,7 +85,7 @@ class SliderSeedOption(ValueSeedOption[float], mods_base.SliderOption):
 
 class SpinnerSeedOption(ValueSeedOption[str], mods_base.SpinnerOption):
     def __post_init__(self) -> None:
-        self.width = math.ceil(math.log2(len(self.choices)))
+        self.width = int(math.ceil(math.log2(len(self.choices))))
         super().__post_init__()
 
     def value_to_bits(self, value: str) -> int:
@@ -97,7 +97,7 @@ class SpinnerSeedOption(ValueSeedOption[str], mods_base.SpinnerOption):
 
 class DropdownSeedOption(ValueSeedOption[str], mods_base.DropdownOption):
     def __post_init__(self) -> None:
-        self.width = math.ceil(math.log2(len(self.choices)))
+        self.width = int(math.ceil(math.log2(len(self.choices))))
         super().__post_init__()
 
     def value_to_bits(self, value: str) -> int:

@@ -11,6 +11,7 @@ from typing import Any, Generator, Sequence
 
 
 VERSION_WIDTH = 5
+VERSION_MAX = 2**VERSION_WIDTH - 1
 BYTE_WIDTH = 8
 DIGIT_WIDTH = 5
 DIGIT_MODULO_BLACKLIST = (1, 3, 6)
@@ -123,6 +124,11 @@ class SeedFormat:
         format_string: str,
         seed_options: Sequence[BaseSeedOption],
     ) -> None:
+        if version > VERSION_MAX:
+            raise SeedFormatError(
+                f"Seed Formats cannot exceed version {VERSION_MAX}."
+            )
+
         self.version = version
         self.format_string = format_string
         self.seed_options = seed_options

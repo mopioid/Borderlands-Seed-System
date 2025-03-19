@@ -403,7 +403,11 @@ class Seed(metaclass=seed_type):
                     " in the mod's options, and should be invoked once the"
                     " mod has been enabled."
                 )
+
             seed_string = menu._seedsystem_dropdown.value  # pyright: ignore[reportPrivateUsage]
+            if not seed_string:
+                return
+
             try:
                 seed = cls(seed_string)
             except Exception as error:
