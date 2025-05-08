@@ -4,7 +4,7 @@ from .options import (
     BaseSeedOption,
     ValueSeedOption,
     GroupedSeedOption,
-    NestedSeedOption
+    NestedSeedOption,
 )
 
 from typing import Any, Generator, Sequence
@@ -15,7 +15,7 @@ VERSION_MAX = 2**VERSION_WIDTH - 1
 BYTE_WIDTH = 8
 DIGIT_WIDTH = 5
 DIGIT_MODULO_BLACKLIST = (1, 3, 6)
-DIGIT_PLACEHOLDERS = 'Xx'
+DIGIT_PLACEHOLDERS = "Xx"
 
 
 class SeedFormatError(Exception):
@@ -23,7 +23,7 @@ class SeedFormatError(Exception):
 
 
 def _flatten_seed_options(
-    seed_options: Sequence[BaseSeedOption]
+    seed_options: Sequence[BaseSeedOption],
 ) -> Generator[ValueSeedOption[Any], None, None]:
     for child in seed_options:
         match child:
@@ -51,12 +51,12 @@ class SeedFormat:
         format_string:
             The final appearance of seeds of this format, as the user will see
             them.
-            
+
             When specifying the format string, instances of the character 'X'
             are used to designate where the actual data representing each seed
             should be inserted. Any non-alphanumeric character can be used for
-            decoration. 
-            
+            decoration.
+
             For example, the format string 'XXXXX-XXXXX-XXXXX` will result in
             seeds with the appearance 'qadle-ta377-777ry'.
 
@@ -64,7 +64,7 @@ class SeedFormat:
             many bits of data it can represent. Available bits are consumed by
             the 5 bit version number, followed by the seed format's options,
             and then any remaining are dedicated to randomness.
-            
+
             Thus, when designing a format string, a sufficent quantity of X's
             are required to reach your desired level of randomess. To assist in
             this while designing a format, you may check the SeedFormat's
@@ -84,6 +84,7 @@ class SeedFormat:
             and `NestedSeedOption`, however these will only appear in the
             seed generation menu.
     """
+
     version: int
     format_string: str
     seed_options: Sequence[BaseSeedOption]
@@ -104,6 +105,7 @@ class SeedFormat:
     determined by the remaining space in its `byte_count` after its version
     number and options' required storage.
     """
+
     @property
     def variant_count(self) -> int:
         """
@@ -116,7 +118,6 @@ class SeedFormat:
         increases the number of possible seeds.
         """
         return 2**self.random_width
-
 
     def __init__(
         self,
@@ -141,14 +142,14 @@ class SeedFormat:
         min_digits = int(math.ceil(min_bytes * BYTE_WIDTH / DIGIT_WIDTH))
 
         digits = 0
-        invalid = ''
+        invalid = ""
         for char in format_string:
             if char in DIGIT_PLACEHOLDERS:
                 digits += 1
             elif char.isalnum() and not char in invalid:
                 invalid += char
 
-        if invalid != '':
+        if invalid != "":
             raise SeedFormatError(
                 f"Invalid characters '{invalid}' in seed format '{format_string}'"
             )
@@ -170,6 +171,5 @@ class SeedFormat:
         self.byte_count = int(math.floor(digits * DIGIT_WIDTH / BYTE_WIDTH))
         self.random_width = self.byte_count * BYTE_WIDTH - min_width
 
-
     def __repr__(self) -> str:
-        return f'{type(self).__name__}({self.version}, {self.format_string})'
+        return f"{type(self).__name__}({self.version}, {self.format_string})"

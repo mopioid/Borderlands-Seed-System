@@ -12,8 +12,7 @@ class BaseSeedOption(mods_base.BaseOption):
 
 
 class ValueSeedOption[J: mods_base.JSON](
-    BaseSeedOption,
-    mods_base.ValueOption[J]
+    BaseSeedOption, mods_base.ValueOption[J]
 ):
     width: int
     """
@@ -34,7 +33,6 @@ class ValueSeedOption[J: mods_base.JSON](
         into their original values.
         """
         raise NotImplementedError
-
 
     def __hash__(self) -> int:
         return id(self)
@@ -67,9 +65,7 @@ class SliderSeedOption(ValueSeedOption[float], mods_base.SliderOption):
             )
 
         self._range = range(
-            int(self.min_value),
-            int(self.max_value) + 1,
-            int(self.step)
+            int(self.min_value), int(self.max_value) + 1, int(self.step)
         )
 
         self.width = int(math.ceil(math.log2(len(self._range))))
@@ -108,8 +104,12 @@ class DropdownSeedOption(ValueSeedOption[str], mods_base.DropdownOption):
 
 
 class GroupedSeedOption(BaseSeedOption, mods_base.GroupedOption):
-    children: Sequence[BaseSeedOption]  # pyright: ignore[reportIncompatibleVariableOverride]
+    children: Sequence[  # pyright: ignore[reportIncompatibleVariableOverride]
+        BaseSeedOption
+    ]
 
 
 class NestedSeedOption(BaseSeedOption, mods_base.NestedOption):
-    children: Sequence[BaseSeedOption]  # pyright: ignore[reportIncompatibleVariableOverride]
+    children: Sequence[  # pyright: ignore[reportIncompatibleVariableOverride]
+        BaseSeedOption
+    ]
