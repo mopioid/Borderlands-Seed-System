@@ -24,15 +24,17 @@ type ApplySeedCallback = Callable[[str], None]
 
 
 def show_message(title: str, message: str) -> None:
+    current_tree = mods_base.Game.get_tree()
+
     if console_screens:
         print(f"\n[ {title} ]\n{message}\n")
 
-    elif mods_base.Game.get_tree() == mods_base.Game.Willow2:
+    elif current_tree == mods_base.Game.Willow1 or current_tree == mods_base.Game.Willow2:
         from ui_utils.training_box import TrainingBox
 
         TrainingBox(title=title, message=message).show()
 
-    elif mods_base.Game.get_tree() == mods_base.Game.Oak:
+    elif current_tree == mods_base.Game.Oak:
         from ui_utils.tutorial_message import show_modal_tutorial_message  # type: ignore
 
         show_modal_tutorial_message(
